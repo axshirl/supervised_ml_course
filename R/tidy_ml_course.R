@@ -68,5 +68,29 @@ fit_rf
 
 #8
 
+# Create the new columns
+results <- car_train %>%
+  mutate(mpg = log(mpg)) %>% 
+  #first the linear reg
+  bind_cols(predict(fit_lm, car_train) %>%
+              rename(.pred_lm = .pred)) %>%
+  #then the random forest
+  bind_cols(predict(fit_rf, car_train) %>% 
+              rename(.pred_rf = .pred))
+
+#Evaluate the performance
+
+#basically, metrics() evaluates model performance. 
+#truth = column being predicted, estimate = prediction from the model
+metrics(results, truth = mpg, estimate = .pred_lm)
+metrics(results, truth = mpg, estimate = .pred_rf)
+
+# note from course "This about the data used here- is that a good idea?
+# Assuming this is referring to how we're estimating the performance
+# of our model by evaluating against the training set still
+# meaning we're not really measuring actual predictive quality
+
+#9 
+
 
 
