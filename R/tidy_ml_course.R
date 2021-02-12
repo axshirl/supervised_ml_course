@@ -92,5 +92,20 @@ metrics(results, truth = mpg, estimate = .pred_rf)
 
 #9 
 
+#Create the new columns- test data this time for prediction
+results <- car_test %>%
+  mutate(mpg = log(mpg)) %>% 
+  #first the linear reg
+  bind_cols(predict(fit_lm, car_test) %>%
+              rename(.pred_lm = .pred)) %>%
+  #then the random forest
+  bind_cols(predict(fit_rf, car_test) %>% 
+              rename(.pred_rf = .pred))
+#Evaluate the performance
+metrics(results, truth = mpg, estimate = .pred_lm)
+metrics(results, truth = mpg, estimate = .pred_rf)
+# Performance is notably less optimistic!
+
+
 
 
