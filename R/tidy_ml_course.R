@@ -107,5 +107,26 @@ metrics(results, truth = mpg, estimate = .pred_rf)
 # Performance is notably less optimistic!
 
 
+#11
 
 
+car_train <- readRDS("data/c1_train_10_percent.rds")
+#create bootstrap resamples from training data
+car_boot <- bootstraps(car_train)
+
+# Evaluate models, use bootstrap resampling
+#fitting 25 times, saving predictions\
+#for linear model
+lm_res <- lm_mod %>%
+  fit_resamples(
+    log(mpg) ~ ., 
+    resamples = car_boot, 
+    control = control_resamples(save_pred = TRUE)
+  )
+#for random forest
+rf_res <- rf_mod %>%
+  fit_resamples(
+    log(mpg) ~ ., 
+    resamples = car_boot, 
+    control = control_resamples(save_pred = TRUE)
+  )
