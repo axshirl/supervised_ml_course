@@ -130,3 +130,32 @@ rf_res <- rf_mod %>%
     resamples = car_boot, 
     control = control_resamples(save_pred = TRUE)
   )
+
+glimpse(rf_res)
+
+#12
+
+lm_res <- readRDS("data/c1_lm_res.rds")
+rf_res <- readRDS("data/c1_rf_res.rds")
+
+#preparing model results for plotting
+#binding together both sets of predictions plus
+#noting type of model 
+results <- bind_rows(lm_res %>%
+                       collect_predictions() %>%
+                       mutate(model = "lm"),
+                     rf_res %>% 
+                       collect_predictions() %>%
+                       mutate(model = "rf"))
+
+glimpse(results)
+
+#plot log of mpg vs prediction (backticks required to name log col)
+#plot line & plot points themselves
+#facet_wrap splits into 2 side by side plots grouped by "model" column
+results %>%
+  ggplot(aes(`log(mpg)`, .pred)) +
+  geom_abline(lty = 2, color = "gray50") + 
+  geom_point(aes(color = id), size = 1.5, alpha = 0.3, show.legend = FALSE) + 
+  geom_smooth(method = "lm") + 
+  facet_wrap(~ model)
