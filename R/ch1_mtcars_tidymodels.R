@@ -1,8 +1,9 @@
+#### Chapter 1 ####
 #install.packages(c('tidyverse', 'tidymodels','randomForest'))
 library(tidyverse)
 cars2018 <- read_csv("data/cars2018.csv")
 
-# Print the cars2018 object
+# Print the cars2018 object 
 glimpse(cars2018)
 
 # Plot the histogram
