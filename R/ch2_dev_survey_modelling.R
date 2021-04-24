@@ -66,7 +66,15 @@ stack_train <- training(stack_split)
 stack_test <- testing(stack_split)
 
 
+#often, our datasets have imbalances- a lot more of 1 category than another
+#will often mean that the model will just predict the majority category, or 
+#our performance on smaller groups will suffer.
 
+#plan is to downsample- to remove observations from the majority category
+#until it reaches  the same size as the minority class
 
+library(themis)
+stack_recipe <- recipe(remote ~ ., data = stack_train) %>% 
+  step_downsample(remote)
 
-glimpse(stack_test)
+stack_recipe
