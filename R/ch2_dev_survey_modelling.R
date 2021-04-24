@@ -53,3 +53,20 @@ ggplot(stack_overflow, aes(remote, years_coded_job)) +
 
 
 
+library(tidymodels)
+stack_select <- stack_overflow %>%
+  select(-respondent)
+
+#creating train/test split
+set.seed(1234)
+stack_split <- stack_overflow %>% 
+  initial_split(prop = 0.8)
+
+stack_train <- training(stack_split)
+stack_test <- testing(stack_split)
+
+
+
+
+
+glimpse(stack_test)
