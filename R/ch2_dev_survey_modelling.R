@@ -77,4 +77,11 @@ library(themis)
 stack_recipe <- recipe(remote ~ ., data = stack_train) %>% 
   step_downsample(remote)
 
-stack_recipe
+stack_prep <- prep(stack_recipe)
+stack_down <- bake(stack_prep, new_data=NULL) #new_data arg extracts the processed training data
+#meaning now we have our balanced data
+
+stack_down %>% 
+  count(remote) #Check it out- 573 Not Remote, 573 Remote. Thanos'd the majority group.
+
+
