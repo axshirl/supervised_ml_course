@@ -11,7 +11,6 @@ stack_overflow <- read_csv("data/stack_overflow.csv")
 
 #looking at the data
 glimpse(stack_overflow)
-View(stack_overflow)
 #rough overview of cols
 #respondent num (numeric, looks like index of respondents)
 #country (chr, self explanatory. looks clean already)
@@ -123,6 +122,26 @@ stack_tree <- stack_wf %>%
 
 #note n=1146- because we downsampled on Remote status
 
+#checking classification performance w/ confusion matrix
 
+results <- stack_test %>%
+  bind_cols(predict(stack_glm, stack_test) %>% #adding the predictions w/ glm 
+              rename(.pred_glm = .pred_class)) 
+#truth = the "real" placement, estimate = predicted placement
+results %>%
+  mutate(remote = as.factor(remote)) %>%
+  conf_mat(truth = remote, estimate = .pred_glm)
 
+#for decision tree version
+results <- stack_test %>%
+  bind_cols(predict(stack_tree, stack_test) %>%
+              rename(.pred_tree = .pred_class))
+
+# Confusion matrix for decision tree model
+results %>% 
+  mutate(remote = as.factor(remote)) %>%
+  conf_mat(truth = remote, estimate = .pred_tree)
+
+#we want to store performance estimates 
+#looking at pos and neg predictive values & overall accuracy
 
