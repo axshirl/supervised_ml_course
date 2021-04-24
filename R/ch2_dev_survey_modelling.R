@@ -84,4 +84,45 @@ stack_down <- bake(stack_prep, new_data=NULL) #new_data arg extracts the process
 stack_down %>% 
   count(remote) #Check it out- 573 Not Remote, 573 Remote. Thanos'd the majority group.
 
+#going to use model specs from parsnip (included in tidymodels)
+#using workflow(), which lets us build out a workflow w/ recipe/formula and a model
+#if you don't add one of these pieces, workflow() will hold an empty spot for that piece
+#which means you can write your modelling code w/ the same preprocessor but different
+#model specs, for example. i.e. add recipe to workflow object & store
+#and then you can add spec to that object and store seperately. workflow in one spot,
+#specs in N other spots.
+
+#build logreg model
+glm_spec <- logistic_reg() %>%
+  set_engine("glm")
+
+stack_wf <- workflow() %>%
+  add_recipe(stack_recipe)
+
+stack_glm <- stack_wf %>%
+  add_model(glm_spec) %>%
+  fit(data = stack_train)
+#note how workflow works here-
+#you add components as you want them. reminds me of ggplot kinda? can
+#stop at any element and cut & reuse all prior pieces at once
+
+#viewing stack_glm at this point will give us slopes for the logreg model
+
+#using stack_recipe from before- this was the recipe w/ the downsample step
+#decision tree model
+tree_spec <- decision_tree() %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+
+stack_wf <- workflow() %>%
+  add_recipe(stack_recipe)
+
+stack_tree <- stack_wf %>%
+  add_model(tree_spec) %>%
+  fit(data = stack_train)
+
+#note n=1146- because we downsampled on Remote status
+
+
+
 
