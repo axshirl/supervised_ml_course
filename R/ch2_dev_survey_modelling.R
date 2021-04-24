@@ -145,3 +145,26 @@ results %>%
 #we want to store performance estimates 
 #looking at pos and neg predictive values & overall accuracy
 
+#adding cols 
+results <- stack_test %>%
+  bind_cols(predict(stack_glm, stack_test) %>%
+              rename(.pred_glm = .pred_class)) %>%
+  bind_cols(predict(stack_tree, stack_test) %>%
+              rename(.pred_tree = .pred_class)) %>%
+  mutate(remote = as.factor(remote))
+
+#using the GLM and Tree predictions, we test overall model accuracy
+accuracy(results, truth = remote, estimate = .pred_glm) #0.639
+accuracy(results, truth = remote, estimate = .pred_tree) #0.564
+
+#and positive predictive value
+#i.e. the value of the model at predicting the positive case
+#(How often we predict positive & the true result is positive)
+ppv(results, truth = remote, estimate = .pred_glm) #0.936
+ppv(results, truth = remote, estimate = .pred_tree) #0.952
+
+npv(results, truth = remote, estimate = .pred_glm) #0.167
+npv(results, truth = remote, estimate = .pred_tree) #0.162
+
+#Our Decision Tree model has a stronger ppv than the logistic reg model,
+#but the logistic regression model has greater overall accuracy.
