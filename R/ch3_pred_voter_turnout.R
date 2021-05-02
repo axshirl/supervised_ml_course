@@ -28,7 +28,8 @@ voters %>%
             `Crime is very important` = mean(imiss_a_2016 == 2))
 
 voters <- voters %>% 
-  mutate(turnout16_2016 = factor(turnout16_2016))
+  mutate(turnout16_2016 = factor(turnout16_2016)) %>% 
+  select(-case_identifier)
 
 #histogram of thoughts on economy (1 = better, 2 = same, 3 = worse, 4 = do not know)
 voters %>% 
@@ -36,6 +37,17 @@ voters %>%
   geom_histogram(alpha = 0.5, position = "identity", binwidth = 1) + 
   labs(title = "Overall, is the economy getting better or worse") 
 
+library(tidymodels)
 
+#split train/test set
+#strata arg is resampling around turnout-
+#basically telling it we want our data to be equal around turnout factors
+set.seed(1234)
+vote_split <- voters %>%
+  initial_split(p=0.8, 
+                strata = turnout16_2016)
+
+vote_train <- training(vote_split)
+vote_test <- testing(vote_split)
 
 
