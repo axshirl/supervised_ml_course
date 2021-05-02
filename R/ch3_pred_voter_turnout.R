@@ -27,4 +27,15 @@ voters %>%
             `Economy is getting better` = mean(econtrend_2016 == 1), 
             `Crime is very important` = mean(imiss_a_2016 == 2))
 
+voters <- voters %>% 
+  mutate(turnout16_2016 = factor(turnout16_2016))
+
+#histogram of thoughts on economy (1 = better, 2 = same, 3 = worse, 4 = do not know)
+voters %>% 
+  ggplot(aes(econtrend_2016, after_stat(density), fill = turnout16_2016)) + 
+  geom_histogram(alpha = 0.5, position = "identity", binwidth = 1) + 
+  labs(title = "Overall, is the economy getting better or worse") 
+
+
+
 
