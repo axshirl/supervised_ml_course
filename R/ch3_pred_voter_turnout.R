@@ -31,12 +31,6 @@ voters <- voters %>%
   mutate(turnout16_2016 = factor(turnout16_2016)) %>% 
   select(-case_identifier)
 
-#histogram of thoughts on economy (1 = better, 2 = same, 3 = worse, 4 = do not know)
-voters %>% 
-  ggplot(aes(econtrend_2016, after_stat(density), fill = turnout16_2016)) + 
-  geom_histogram(alpha = 0.5, position = "identity", binwidth = 1) + 
-  labs(title = "Overall, is the economy getting better or worse") 
-
 library(tidymodels)
 
 #split train/test set
@@ -49,5 +43,24 @@ vote_split <- voters %>%
 
 vote_train <- training(vote_split)
 vote_test <- testing(vote_split)
+
+#histogram of thoughts on economy (1 = better, 2 = same, 3 = worse, 4 = do not know)
+voters %>% 
+  ggplot(aes(econtrend_2016, after_stat(density), fill = turnout16_2016)) + 
+  geom_histogram(alpha = 0.5, position = "identity", binwidth = 1) + 
+  labs(title = "Overall, is the economy getting better or worse") 
+#notice how generally, those who say the economy is improving are more likely to vote?
+#data needs preprocessing- there's a lot of additional imbalanced data, not just our target variable
+
+#plan is to upsample- add in more of the folks who did not vote until the classes are balanced
+#this does add a risk of overfitting that we'll need to be careful of
+library(themis)
+
+vote_recipe <- recipe(turnout16_2016 ~ ., data = vote_train) %>%
+  step_upsample(turnout16_2016)
+
+
+
+
 
 
