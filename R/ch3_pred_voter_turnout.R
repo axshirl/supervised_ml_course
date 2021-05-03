@@ -60,7 +60,24 @@ vote_recipe <- recipe(turnout16_2016 ~ ., data = vote_train) %>%
   step_upsample(turnout16_2016)
 
 
+rf_spec <- rand_forest() %>% 
+  set_engine("ranger") %>% 
+  set_mode("classification")
 
+vote_wf <- workflow() %>%
+  add_recipe(vote_recipe) %>% 
+  add_model(rf_spec)
+
+#created rand forest classification model running on ranger computational engine
+vote_wf
+
+#trying cross-validation
+#will take our training set & divide into even subsets (folds)
+#one fold is used for validation, rest for training, repeat steps w/ all folds and combine results
+
+#arg `v` refers to number of folds
+#arg `repeats` refers to number of times to repeat the whole process
+vote_folds <- vfold_cv(vote_train, v = 10, repeats = 5)
 
 
 
