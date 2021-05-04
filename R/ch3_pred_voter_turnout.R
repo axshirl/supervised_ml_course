@@ -120,5 +120,14 @@ collect_metrics(rf_res)
 #but also that it has a sensitivity of _zero_
 #meaning that it couldn't correctly identify any of the people who didn't vote
 
+#we know the glm was better
+vote_wf <- workflow() %>%
+  add_recipe(vote_recipe) %>% 
+  add_model(glm_spec)
 
+vote_final <- vote_wf %>%
+  last_fit(vote_split)
 
+vote_final %>% 
+  collect_predictions() %>%
+  conf_mat(turnout16_2016, .pred_class)
