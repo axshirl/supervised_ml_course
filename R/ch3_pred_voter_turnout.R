@@ -113,4 +113,12 @@ rf_res <- vote_wf %>%
     metrics = metric_set(roc_auc, sens, spec), 
     control = control_resamples(save_pred = TRUE)
   )
-glimpse(rf_res)
+
+collect_metrics(glm_res)
+collect_metrics(rf_res) 
+#note the higher AUC for the rf model...
+#but also that it has a sensitivity of _zero_
+#meaning that it couldn't correctly identify any of the people who didn't vote
+
+
+
