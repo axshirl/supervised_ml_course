@@ -77,7 +77,31 @@ vote_wf
 
 #arg `v` refers to number of folds
 #arg `repeats` refers to number of times to repeat the whole process
-vote_folds <- vfold_cv(vote_train, v = 10, repeats = 5)
+vote_folds <- vfold_cv(vote_train, v = 10)
+
+#assessing model performance & non-default performance metrics
+
+#Some ways to evaluate model performance of classification models
+#Area under ROC Curve is how well the model differentiates positives/negatives. 
+#Perfect AUC = 1, baseline = 0.5
+#Sensitivity is percent of actual positives identified correctly (True Positive rate)
+#Specificity is percent of actual negatives identified correctly (True Negative rate)
+
+glm_spec <- logistic_reg() %>% 
+  set_engine("glm")
+
+vote_wf <- workflow() %>%
+  add_recipe(vote_recipe) %>% 
+  add_model(glm_spec) #note how we can just drop in the model spec w/ workflows
+
+set.seed(234)
+glm_res <- vote_wf %>%
+  fit_resamples(
+    vote_folds, 
+    metrics = metric_set(roc_auc, sens, spec), 
+    control = control_resamples(save_pred = TRUE)
+  )
+
 
 
 
