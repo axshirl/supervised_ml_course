@@ -102,6 +102,15 @@ glm_res <- vote_wf %>%
     control = control_resamples(save_pred = TRUE)
   )
 
+vote_wf <- workflow() %>%
+  add_recipe(vote_recipe) %>%
+  add_model(rf_spec)
 
-
-
+set.seed(234)
+rf_res <- vote_wf %>% 
+  fit_resamples(
+    vote_folds, 
+    metrics = metric_set(roc_auc, sens, spec), 
+    control = control_resamples(save_pred = TRUE)
+  )
+glimpse(rf_res)
